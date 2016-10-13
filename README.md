@@ -5,6 +5,8 @@ What is this?
 
 This is a bot that runs on your personal account, that notifies you on a chat you define about mentions and replies.
 
+Never miss a reply or a direct mention anymore. 
+
 ============
 A Telegram Bot based on plugins using [tg](https://github.com/Rondoozle/tg). Forked from [LucentW's s-uzzbot](https://github.com/LucentW/s-uzzbot), which is forked from [uziins' uzzbot](https://github.com/uziins/uzzbot), which is forked from [Yagop's](https://github.com/yagop/telegram-bot).
 
@@ -35,5 +37,6 @@ Take in account that logging in with a bot token has some caveats: `delmsg` and 
 Setting up the plugin:
 
 TBD
+
 
 
