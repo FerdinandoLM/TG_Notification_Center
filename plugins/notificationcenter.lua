@@ -1,6 +1,6 @@
 --- Telegram Notification Center!
 ---
---- version: 4.1.2
+--- version: 4.2.2
 --- version date: 2017-08-23
 --- version codename: TwinBot
 ---
@@ -52,22 +52,25 @@
 ---
 --- To disable one of the features change the value of local mcheck = "1" and local rcheck = "1"
 --- To "0". mcheck= "0" disable mentions checking, rcheck = "0" disables replies checking
---- 
-local function run(msg)
+--- local function run(msg)
 
 
 --- Declaring stuff
-receiverid = 'chat#id1234567' --- Put the chat id where you want to receive the notifications.
-receiverid2 = '-1234567'  --- Put the chat id where you want to receive the notifications. beware: keep the minus symbol at the begin and skip "id" before the numbrs
-local bottoken = "123456789:ABCD1234jklmnOPQ56789xyz" --- INSERT BOT API KEY
+notificationgroup = '1234567'
+--- Put the chat id where you want to receive the notifications.
+local bottoken = "123456789:ABCd1XGSKK9dkx6l3dft33EXAMPLE"
+--- Put the BOT API KEY.
 
+
+--- Declares
+receiverid = 'chat#id'.. notificationgroup 
+receiverid2 = '-'.. notificationgroup
 local text = string.lower(msg.text)
 local origin = get_receiver(msg)
 local chat_id = msg.to.id
 local chat_name = msg.to.print_name
 local mentionflag = msg.mention
 local msgflag = msg.flag
---- End of declaring stuff
 
 -- Empty user name check
 if not msg.from.username then
@@ -78,10 +81,18 @@ end
 --- End of empty user name check ---
 
 --- Checking for trigger words ---
-if string.find(text, "SURNAME") or string.find(text, "MIDDLE") or string.find(text, "NAME") then
+if string.find(text, "alpha") or string.find(text, "beta") or string.find(text, "delta") then
 	local mcheck = "1"
 		if string.find(mcheck, "1") then
 			texttosend='You got mentioned by ' .. from_username .. '\n\nUser ID:' .. '\n\nChat name:' .. chat_name .. '\n\nChat id: ' .. chat_id .. '\n\n Time:' .. os.date("%c")
+			local ignorecheck = "1"
+                if string.find(ignorecheck, "1") then
+					if string.find(chat_id, notificationgroup) then 
+						texttosend=''
+						msg.id="0"
+						receiverid="0"
+						else
+						end
 			end 
 			do 
 				fwd_msg(receiverid, msg.id, ok_cb, false) 
@@ -113,7 +124,7 @@ end
 end
 
 return {
- description = "Telegram Notification Center!",
+ description = "Notification Center",
  usage = "Get notified when someone says your name or replies to you",
  patterns = {
  "^(.+)$"

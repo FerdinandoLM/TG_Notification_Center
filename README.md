@@ -49,7 +49,7 @@ Notice: (There is no need to put the bot inside other groups except the notifica
 
       a. Put the group ID on the variable ```receiverid``` and ```receiverid2``` , example: ``` receiverid = 'chat#id1234567' ```
 
-      b. Search for ```"NAME"```, ```"SURNAME"``` and ```"MIDDLE"``` and change them with anything you want (keep the quotation marks).
+      b. Search for ```"alpha"```, ```"beta"``` and ```"delta"``` and change them with anything you want (keep the quotation marks).
       For example i use many versions of my name, my nickname and things like that in order to keep track when people try to call me without ```@nickname``` trigger.
       The reply checker simply checks if someone replies to your messages. Note that this only works if you're using the bot under your personal account, and won't work if operating under Telegram Bot APIs
 
@@ -76,7 +76,7 @@ A Telegram Bot based on plugins using [tg](https://github.com/Rondoozle/tg). For
 ----------
 
 ## Version
-Version: ```4.1.2```
+Version: ```4.2.2```
 Version date: ```2017-08-23```
 Version codename: ```TwinBot```
 
