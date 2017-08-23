@@ -4,6 +4,9 @@ local FakeRedis = require 'fakeredis'
 local params = {
   host = '127.0.0.1',
   port = 6379,
+  db = 0
+  --- for multiple instances on the same machine 
+  --- change db = 0 with a number from 0 to 15
 }
 
 -- Overwrite HGETALL
@@ -23,7 +26,6 @@ local ok = pcall(function()
 end)
 
 if not ok then
-
   local fake_func = function()
     print('\27[31mCan\'t connect with Redis, install/configure it!\27[39m')
   end
@@ -40,8 +42,8 @@ if not ok then
     end
     return fake[b] or fake_func
   end })
-
+else
+  redis:select(params.db or 0)
 end
-
 
 return redis

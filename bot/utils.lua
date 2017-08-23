@@ -243,16 +243,15 @@ end
 function is_mod(user_id, chat_id)
   local var = false
   local data = load_data(_config.moderation.data)
-  local user = user_id
-  if data[chat_id] then
-    if data[chat_id]['moderators'] then
-      if data[chat_id]['moderators'][tostring(user)] then
+  if data[tostring(chat_id)] then
+    if data[tostring(chat_id)]['moderators'] then
+      if data[tostring(chat_id)]['moderators'][tostring(user_id)] then
         var = true
       end
     end
   end
   if data['admins'] then
-    if data['admins'][tostring(user)] then
+    if data['admins'][tostring(user_id)] then
       var = true
     end
   end
@@ -583,25 +582,35 @@ function send_large_msg_callback(cb_extra, success, result)
 
   local destination = cb_extra.destination
   local text = cb_extra.text
+
   if not text then
     return
   end
-  local text_len = string.len(text)
-  local num_msg = math.ceil(text_len / text_max)
 
-  if num_msg <= 1 then
-    send_msg(destination, text, ok_cb, false)
+  local text_len
+  if type(text) ~= "boolean" then
+    text_len = string.len(text) or 0
   else
+    text_len = 0
+  end
 
-    local my_text = string.sub(text, 1, 4096)
-    local rest = string.sub(text, 4096, text_len)
+  if text_len > 0 then
+    local num_msg = math.ceil(text_len / text_max)
 
-    local cb_extra = {
-      destination = destination,
-      text = rest
-    }
+    if num_msg <= 1 then
+      send_msg(destination, text, ok_cb, false)
+    else
 
-    send_msg(destination, my_text, send_large_msg_callback, cb_extra)
+      local my_text = string.sub(text, 1, 4096)
+      local rest = string.sub(text, 4096, text_len)
+
+      local cb_extra = {
+        destination = destination,
+        text = rest
+      }
+
+      send_msg(destination, my_text, send_large_msg_callback, cb_extra)
+    end
   end
 end
 

@@ -17,13 +17,27 @@ function on_msg_receive (msg)
 
   local receiver = get_receiver(msg)
 
+  local chat_id = msg.to.id
+  local hashchat = 'whitelist:modonly:'..chat_id
+  local whitelistmod = redis:get(hashchat) or false
+
   -- vardump(msg)
   msg = pre_process_service_msg(msg)
+  
   if msg_valid(msg) then
     msg = pre_process_msg(msg)
     if msg then
-      match_plugins(msg)
-      mark_read(receiver, ok_cb, false)
+      if not whitelistmod or (whitelistmod and is_momod(msg)) then
+        match_plugins(msg)
+      else
+        print('Message ignored -- '..chat_id..' has modonly wl enabled')
+      end
+
+-- Commented out since it is a cosmetic feature.
+-- Also breaks UX on groups since on standard mode it marks the message
+-- as read for everybody.
+--    mark_read(receiver, ok_cb, false)
+
     end
   end
 end
@@ -58,7 +72,7 @@ function msg_valid(msg)
   end
 
   if msg.unread == 0 then
-    print('\27[36mNot valid: readed\27[39m')
+    print('\27[36mNot valid: read\27[39m')
     return false
   end
 
@@ -149,6 +163,16 @@ local function is_plugin_disabled_on_chat(plugin_name, receiver)
   return false
 end
 
+-- Check if nsfw is disabled on _config.disabled_nsfw_on_chat table
+local function is_nsfw_disabled_on_chat(receiver)
+  local disabled_chats = _config.disabled_nsfw_on_chat
+  -- Table exists and chat has disabled plugins
+  if disabled_chats and disabled_chats[receiver] then
+    return disabled_chats[receiver] or false
+  end
+  return false
+end
+
 function match_plugin(plugin, plugin_name, msg)
   local receiver = get_receiver(msg)
 
@@ -160,6 +184,9 @@ function match_plugin(plugin, plugin_name, msg)
 
       if not is_sudo(msg) then
         if is_plugin_disabled_on_chat(plugin_name, receiver) then
+          return nil
+        end
+        if plugin.nsfw and is_nsfw_disabled_on_chat(receiver) then
           return nil
         end
       end
@@ -214,32 +241,55 @@ function create_config( )
   -- A simple config with basic plugins and ourselves as privileged user
   config = {
     enabled_plugins = {
-      "echo",
-      "get",
-      "google",
       "groupmanager",
       "help",
-      "id",
-      "images",
-      "img_google",
       "location",
-      "media",
       "plugins",
-      "channels",
-      "set",
       "stats",
       "time",
       "version",
-      "weather",
-      "youtube",
       "media_handler",
-    "moderation"},
+      "moderation",
+      "sudo",
+      "9gag",
+      "xkcd",
+      "wiki",
+      "danbooru",
+      "imdb",
+      "boobs",
+      "banhammer",
+      "meme",
+      "weather",
+      "pokedex",
+      "rss",
+      "roll",
+      "join",
+      "eur",
+      "isup",
+      "music",
+      "hello",
+      "invite_sudo",
+      "id",
+      "antispam",
+      "delmsg",
+      "anti-flood",
+      "expand",
+      "tex",
+      "webshot",
+      "translate",
+      "mute",
+      "kitty",
+      "ud",
+      "leave",
+      "why"
+    },
     sudo_users = {our_id},
     disabled_channels = {},
     moderation = {data = 'data/moderation.json'}
   }
   serialize_to_file(config, './data/config.lua')
-  print ('saved config into ./data/config.lua')
+  print ('Saved clean configuration into ./data/config.lua')
+  print ('Make sure to edit sudo_users and add your ID.')
 end
 
 function on_our_id (id)
@@ -252,6 +302,10 @@ end
 
 function on_chat_update (chat, what)
   --vardump (chat)
+end
+
+function on_channel_update (channel, what)
+  --vardump (channel)
 end
 
 function on_secret_chat_update (schat, what)
