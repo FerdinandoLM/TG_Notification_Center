@@ -1,4 +1,4 @@
---- ALERTME!
+--- Telegram Notification Center!
 ---
 --- version: 3.0.1
 --- version date: 2016-08-05
@@ -14,7 +14,7 @@
 ---			- Now checks if the user triggering has a nickname
 --- 		- Now says chat id
 ---
---- Alertme is a plugin that let you create a sort of Notification Center for telegram
+--- Telegram Notification Center is a plugin that let you create a sort of Notification Center for telegram
 --- 
 --- To run this plugin you must install a bot and login with the telegram account 
 --- that you want to monitor. You may run as a normal bot
@@ -103,7 +103,7 @@ end
 end
 
 return {
- description = "AlertMe!",
+ description = "Telegram Notification Center",
  usage = "Get notified when someone says your name or replies to you",
  patterns = {
  "^(.+)$"

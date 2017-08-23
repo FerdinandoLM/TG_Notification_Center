@@ -6,7 +6,7 @@ do local _ = {
   enabled_plugins = {
     "help",
     "plugins",
-    "AlertMe"
+    "notificationcenter"
   },
   moderation = {
     data = "data/moderation.json"
