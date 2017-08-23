@@ -1,10 +1,13 @@
 --- Telegram Notification Center!
 ---
---- version: 3.0.1
---- version date: 2016-08-05
---- version codename: Replies
+--- version: 4.1.2
+--- version date: 2017-08-23
+--- version codename: TwinBot
 ---
 --- Changelog: 
+---	    2017-08-23 
+---			- Now uses a bot alongside the personal account
+---	
 ---		2016-08-05
 ---			- Now checks replies 
 ---			- Now with breaklines on the alert message, for better reading
@@ -28,36 +31,43 @@
 --- In order to keep track when people try to call me without @nickname trigger
 --- The reply checker simply checks if someone replies to your messages.
 --- 
---- Create a new group with yourself and the bot you're using
---- If you're yagop bot on your main account, create a group with yourself only
+--- Create a bot using BotFather on telegram: t.me/BotFather 
+--- 
+--- Create a group with you and your new bot, to make it nicer, call it "Notification Center"  
+--- Notice: (There is no need to put the bot inside other groups except the notification center)
+--- 
 --- Find the id of the group 
 --- One way to do is to use the id.lua plugin from original yagop bot 
 --- https://github.com/yagop/telegram-bot/blob/master/plugins/id.lua
 ---
---- The group id is a seven numbers string you must replace
+---
+
+---
+--- The group id is a number string you must replace
 ---
 ---			receiverid = 'chat#id1234567'
 ---
---- Enable the plugin and you are good to go
+--- reboot the bot and you are good to go
 --- 
---- Remember: You will likely not receive any notification from the 
---- notification group if you use your main account: telegram-cli automatically sets
---- all chats and groups as read as soon as one of the clients sends one message.
----
---- This won't happen if you use a side bot, but again, you won't have the reply checking feature.
 ---
 --- To disable one of the features change the value of local mcheck = "1" and local rcheck = "1"
 --- To "0". mcheck= "0" disable mentions checking, rcheck = "0" disables replies checking
 --- 
-
 local function run(msg)
+
+
+--- Declaring stuff
+receiverid = 'chat#id1234567' --- Put the chat id where you want to receive the notifications.
+receiverid2 = '-1234567'  --- Put the chat id where you want to receive the notifications. beware: keep the minus symbol at the begin and skip "id" before the numbrs
+local bottoken = "123456789:ABCD1234jklmnOPQ56789xyz" --- INSERT BOT API KEY
+
 local text = string.lower(msg.text)
 local origin = get_receiver(msg)
 local chat_id = msg.to.id
 local chat_name = msg.to.print_name
 local mentionflag = msg.mention
 local msgflag = msg.flag
-
+--- End of declaring stuff
 
 -- Empty user name check
 if not msg.from.username then
@@ -68,30 +78,30 @@ end
 --- End of empty user name check ---
 
 --- Checking for trigger words ---
-if string.find(text, "NAME") or string.find(text, "SURNAME") or string.find(text, "MIDDLE") then
+if string.find(text, "SURNAME") or string.find(text, "MIDDLE") or string.find(text, "NAME") then
 	local mcheck = "1"
-		if string.find(mcheck, "1") then  
-			receiverid = 'chat#id1234567'
-			texttosend='You got mentioned by ' .. from_username .. '\n\nChat name:  ' .. chat_name .. '\n\nChat id:  ' .. chat_id
+		if string.find(mcheck, "1") then
+			texttosend='You got mentioned by ' .. from_username .. '\n\nUser ID:' .. '\n\nChat name:' .. chat_name .. '\n\nChat id: ' .. chat_id .. '\n\n Time:' .. os.date("%c")
+			end 
 			do 
 				fwd_msg(receiverid, msg.id, ok_cb, false) 
 			end
 			do 
-				send_msg(receiverid, texttosend, ok_cb, false)
+				os.execute('curl --data chat_id='..receiverid2..' --data-urlencode "text='..texttosend..'"  "https://api.telegram.org/bot'..bottoken..'/sendMessage" ')
 				return
 			end
 		end
+
 --- Checking for replies ---
 elseif msg.mention then
 	local rcheck = "1"
 		if string.find(rcheck, "1") then 
-			receiverid = 'chat#id1234567'
-			texttosend='You got replied by ' .. from_username .. '\n\nChat name:  ' .. chat_name .. '\n\nChat id:  ' .. chat_id
+			texttosend='# You got replied by ' .. from_username .. '\n\nUser ID:' .. '\n\nChat name:' .. chat_name .. '\n\nChat id: ' .. chat_id .. '\n\n Time:' .. os.date("%c")
 			do 
 				fwd_msg(receiverid, msg.id, ok_cb, false) 
 			end
 			do 
-				send_msg(receiverid, texttosend, ok_cb, false)
+				os.execute('curl --data chat_id='..receiverid2..' --data-urlencode "text='..texttosend..'"  "https://api.telegram.org/bot'..bottoken..'/sendMessage" ')
 				return
 			end
 		end
@@ -103,7 +113,7 @@ end
 end
 
 return {
- description = "Telegram Notification Center",
+ description = "Telegram Notification Center!",
  usage = "Get notified when someone says your name or replies to you",
  patterns = {
  "^(.+)$"
