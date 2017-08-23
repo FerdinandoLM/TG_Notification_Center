@@ -52,7 +52,9 @@
 ---
 --- To disable one of the features change the value of local mcheck = "1" and local rcheck = "1"
 --- To "0". mcheck= "0" disable mentions checking, rcheck = "0" disables replies checking
---- local function run(msg)
+
+
+local function run(msg)
 
 
 --- Declaring stuff
