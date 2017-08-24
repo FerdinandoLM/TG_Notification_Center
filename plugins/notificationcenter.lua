@@ -82,6 +82,14 @@ else
 end
 --- End of empty user name check ---
 
+--- Running plugin check ---
+if string.find(text, "notificationcentercheck") or string.find(text, "telegramnotificationcentercheck") then
+local botanswers = {from_username .." Telegram Notification Center check ok: https://github.com/FerdinandoLM/TG_Notification_Center"}
+return botanswers[math.random(#botanswers)]
+end
+
+--- End of running plugin check ---
+
 --- Checking for trigger words ---
 if string.find(text, "alpha") or string.find(text, "beta") or string.find(text, "delta") then
 	local mcheck = "1"
